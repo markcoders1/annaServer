@@ -4,7 +4,7 @@ const leadController = require("../controllers/lead.controller");
 const authMiddleware = require("../middleware/auth.middleware");
 
 // Apply auth middleware to all routes
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 // Routes
 router.get("/", leadController.getAllLeads);
