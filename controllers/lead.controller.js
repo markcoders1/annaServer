@@ -1,13 +1,26 @@
 const Lead = require("../models/lead.model");
 
-// Get all leads
+// Get all leads with pagination
 exports.getAllLeads = async (req, res) => {
     try {
-        const leads = await Lead.find();
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const leads = await Lead.find().skip(skip).limit(limit);
+        const total = await Lead.countDocuments();
+
         res.status(200).json({
             success: true,
-            count: leads.length,
             data: leads,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                totalItems: total,
+                itemsPerPage: limit,
+                hasNextPage: page < Math.ceil(total / limit),
+                hasPreviousPage: page > 1,
+            },
         });
     } catch (error) {
         res.status(500).json({
